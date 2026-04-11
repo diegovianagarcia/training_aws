@@ -1,0 +1,19 @@
+
+
+resource "aws_instance" "bia_dev" {
+  ami           = "ami-01b14b7ad41e17ba4"
+  instance_type = "t3.micro"
+  tags = {
+    ambiente = "dev"
+    Name     = var.instance_name
+  }
+
+  vpc_security_group_ids = [aws_security_group.bia_dev.id]
+
+  root_block_device {
+    volume_size = 10
+  }
+  iam_instance_profile = aws_iam_instance_profile.role_acesso_ssm.name
+
+  user_data = file("user_data_biadev.sh")
+}
