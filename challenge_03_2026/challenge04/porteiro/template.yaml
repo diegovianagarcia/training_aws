@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  porteiro
+
+  Sample SAM Template for porteiro
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  StartPorteiro:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Handler: src/handlers/porteiro.startEC2Instance
+      Runtime: nodejs24.x
+      Architectures:
+      - x86_64
+      Events:
+        CloudWatchEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(50 10 ? * MON-FRI *)
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Sid: StartEC2Instances
+              Effect: Allow
+              Action:
+                - ec2:StartInstances
+              Resource: "*"
+  StopPorteiro:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Handler: src/handlers/porteiro.stopEC2Instance
+      Runtime: nodejs24.x
+      Architectures:
+      - x86_64
+      Events:
+        CloudWatchEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(10 21 ? * MON-FRI *)
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Sid: StopEC2Instances
+              Effect: Allow
+              Action:
+                - ec2:StopInstances
+              Resource: "*"              
