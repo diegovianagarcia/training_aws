@@ -1,6 +1,6 @@
 resource "aws_security_group" "bia_dev" {
-  name        = "bia_dev"
-  description = "acesso do bia_dev"
+  name        = "bia-dev"
+  description = "acesso do bia-dev"
   vpc_id      = local.vpc_id
 
   ingress {

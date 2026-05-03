@@ -8,7 +8,7 @@ https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
 - Create user bia and configure aws cli profile
 
 ```sh
-$ aws cli configure profile bia
+$ aws configure profile bia
 ```
 
 # Terraform comands
