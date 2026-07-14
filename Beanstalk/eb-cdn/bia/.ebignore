@@ -1,0 +1,4 @@
+# Ignora tudo
+*
+# Exceto o docker-compose
+!docker-compose.yml
