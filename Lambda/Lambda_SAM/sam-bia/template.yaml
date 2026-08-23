@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-bia
+
+  Sample SAM Template for sam-bia
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 512
+  Api:
+    Cors:
+      AllowMethods: "'OPTIONS,GET,PUT,POST,DELETE'"
+      AllowHeaders: "'Content-Type,X-Api-Key'"
+      AllowOrigin: "'*'"
+
+Resources:
+  TarefasFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: ./
+      Handler: lambda.handler
+      Runtime: nodejs24.x
+      Architectures:
+        - x86_64
+      Events:
+        Ping:
+          Type: Api
+          Properties:
+            Path: /api/ping
+            Method: get
+        GetVersao:
+          Type: Api
+          Properties:
+            Path: /api/versao
+            Method: get
+        GetTarefas:
+          Type: Api
+          Properties:
+            Path: /api/tarefas
+            Method: get
+        CreateTarefa:
+          Type: Api
+          Properties:
+            Path: /api/tarefas
+            Method: post
+        GetTarefa:
+          Type: Api
+          Properties:
+            Path: /api/tarefas/{uuid}
+            Method: get
+        DeleteTarefa:
+          Type: Api
+          Properties:
+            Path: /api/tarefas/{uuid}
+            Method: delete
+        UpdatePriority:
+          Type: Api
+          Properties:
+            Path: /api/tarefas/update_priority/{uuid}
+            Method: put
+        GetCacheConfig:
+          Type: Api
+          Properties:
+            Path: /api/cache-config
+            Method: get
+      Environment:
+        Variables:
+          DB_HOST: bia.cluster-co70gok8o718.us-east-1.rds.amazonaws.com
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PWD: me36WMbS!u):Dx3Zo|Ksiiu5fU6Z
+      VpcConfig: 
+        SecurityGroupIds:
+          - sg-0344fbcf464fca9cb
+        SubnetIds:
+          - subnet-0c7211650af34e7ec
+          - subnet-015b649aef2a4db51
