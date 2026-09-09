@@ -1,0 +1,14 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+  build:
+    commands:
+      - echo "Executando sam build"
+      - sam build -t template.yaml
+      - echo "Executando sam package"
+      - sam package --template .aws-sam/build/template.yaml --output-template-file template-out-bia-serverless-sam.yaml --s3-bucket bia-sam-pipeline --config-env default
+artifacts:
+  files:
+    - template-out-bia-serverless-sam.yaml

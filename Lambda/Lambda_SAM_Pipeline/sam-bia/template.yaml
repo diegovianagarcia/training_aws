@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  bia-serverless
+
+  Projeto da bia com sam da Formacao AWS
+  
+Parameters:
+  SecurityGroup:
+    Type: String
+    Description: ID do Security Group para a VPC
+  DBName:
+    Type: String
+    Description: Nome do banco de dados
+  DBUser:
+    Type: String
+    Description: Nome do usuário do banco de dados
+  DBPassword:
+    Type: String
+    Description: Senha do usuário do banco de dados
+  DBHost:
+    Type: String
+    Description: Host do banco de dados
+Globals:
+  Function:
+    Timeout: 3   
+    MemorySize: 512
+    Environment:
+       Variables:
+          DB_USER: !Ref DBUser
+          DB_NAME: !Ref DBName
+          DB_PWD: !Ref DBPassword
+          DB_HOST: !Ref DBHost
+          DB_PORT: 5432
+  Api:
+    Cors:
+      AllowMethods: "'GET, PUT, POST, DELETE, OPTIONS'"
+      AllowOrigin: "'*'"
+      AllowHeaders: "'Content-type, x-api-key'"     
+Resources:  
+  TarefasFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: ./
+      Handler: lambda.handler
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref SecurityGroup
+        SubnetIds:
+          - subnet-0c7211650af34e7ec
+          - subnet-015b649aef2a4db51
+      Events:
+        Ping:
+          Type: Api 
+          Properties:
+            Path: /api/ping
+            Method: get  
+        Versao:
+          Type: Api 
+          Properties:
+            Path: /api/versao
+            Method: get 
+        GetTarefas:
+          Type: Api 
+          Properties:
+            Path: /api/tarefas
+            Method: get
+        PostTarefa:
+          Type: Api 
+          Properties:
+            Path: /api/tarefas
+            Method: post
+        GetTarefa:
+          Type: Api 
+          Properties:
+            Path: /api/tarefas/{uuid}
+            Method: get
+        UpdatePriority:
+          Type: Api 
+          Properties:
+            Path: /api/tarefas/update_priority/{uuid}
+            Method: put
+        DeleteTarefa:
+          Type: Api 
+          Properties:
+            Path: /api/tarefas/{uuid}
+            Method: delete
+
+    
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  TarefasApi:
+    Description: "API Gateway endpoint URL for Prod stage for Tarefas function"
+    Value:
+      Fn::Sub: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/tarefas"
+  TarefasFunction:
+    Description: "Tarefas Lambda Function ARN"
+    Value: 
+      Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:TarefasFunction"
+  TarefasFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: 
+      Fn::Sub: "arn:aws:iam::${AWS::AccountId}:role/TarefasFunctionRole"

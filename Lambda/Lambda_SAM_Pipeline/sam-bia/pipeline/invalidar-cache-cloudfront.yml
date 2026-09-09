@@ -1,0 +1,6 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - echo "Invalidando cache do CloudFront para o index.html"
+      - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/index.html"

@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'bia-serverless
+
+  Projeto da bia com sam da Formacao AWS
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 512
+  Api:
+    Cors:
+      AllowMethods: '''GET, PUT, POST, DELETE, OPTIONS'''
+      AllowOrigin: '''*'''
+      AllowHeaders: '''Content-type, x-api-key'''
+Resources:
+  TarefasFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://bia-sam-pipeline/ede31506f59260a65ba027b3a9b1c6ba
+      Handler: lambda.handler
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      Events:
+        Ping:
+          Type: Api
+          Properties:
+            Path: /api/ping
+            Method: get
+        Versao:
+          Type: Api
+          Properties:
+            Path: /api/versao
+            Method: get
+        GetTarefas:
+          Type: Api
+          Properties:
+            Path: /api/tarefas
+            Method: get
+        PostTarefa:
+          Type: Api
+          Properties:
+            Path: /api/tarefas
+            Method: post
+        GetTarefa:
+          Type: Api
+          Properties:
+            Path: /api/tarefas/{uuid}
+            Method: get
+        UpdatePriority:
+          Type: Api
+          Properties:
+            Path: /api/tarefas/update_priority/{uuid}
+            Method: put
+        DeleteTarefa:
+          Type: Api
+          Properties:
+            Path: /api/tarefas/{uuid}
+            Method: delete
+      Environment:
+        Variables:
+          DB_USER: postgres
+          DB_PWD: postgres
+          DB_HOST: database
+          DB_PORT: 5432
+      VpcConfig:
+        SecurityGroupIds:
+        - sg-0344fbcf464fca9cb
+        SubnetIds:
+        - subnet-0c7211650af34e7ec
+        - subnet-015b649aef2a4db51
+    Metadata:
+      SamResourceId: TarefasFunction
